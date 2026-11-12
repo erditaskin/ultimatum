@@ -22,3 +22,5 @@ npm run benchmark
 Development uses port 8082 to avoid this machine's Docker service on 8081. Install dependencies before starting Metro; do not run package installation alongside the bundler. For a standalone offline build, use a Release configuration; a Debug build still needs Metro even though gameplay and persistence are offline.
 
 `docs/ci-workflow.example.yml` is an optional GitHub Actions template. It is not activated: the current GitHub OAuth credential cannot publish workflow files. Local validation commands remain available without extra account permissions.
+
+The approved visual identity and three mixed item families are documented in `docs/ART_DIRECTION.md`; Imagegen production prompts are in `docs/art-prompts.md`. V2 saves preserve V1 progress while assigning the formerly generic pieces stable families.

@@ -7,17 +7,11 @@ import Animated, {
   withTiming,
   runOnJS,
 } from "react-native-reanimated";
-import { Tile as Level, NAMES } from "../game/engine";
-const colors = [
-  "transparent",
-  "#8EDFCB",
-  "#91CFF5",
-  "#B9A2F4",
-  "#FFB77C",
-  "#FF85B4",
-];
+import { Tile as Level } from "../game/engine";
+import { Art, FAMILIES, Family } from "./art";
 type Props = {
   level: Level | null;
+  family: Family;
   index: number;
   size: number;
   selected: boolean;
@@ -30,6 +24,7 @@ type Props = {
 };
 export const Tile = memo(function Tile({
   level,
+  family,
   index,
   size,
   selected,
@@ -130,8 +125,8 @@ export const Tile = memo(function Tile({
       <Animated.View
         accessible
         accessibilityRole="button"
-        accessibilityLabel={`${Math.floor(index / 6) + 1}. satır ${(index % 6) + 1}. sütun, ${level ? NAMES[level] : "boş"}`}
-        accessibilityHint="Seçmek için dokun. Hazır makineyi patlatmak için basılı tut."
+        accessibilityLabel={`${Math.floor(index / 6) + 1}. satır ${(index % 6) + 1}. sütun, ${level ? FAMILIES[family].names[level] : "boş"}`}
+        accessibilityHint="Seçmek için dokun. Hazır parçayı patlatmak için basılı tut."
         accessibilityActions={[
           { name: "activate" },
           { name: "longpress", label: "Patlat" },
@@ -154,32 +149,33 @@ export const Tile = memo(function Tile({
             pointerEvents="none"
             style={[
               StyleSheet.absoluteFill,
-              { borderWidth: 3, borderColor: "#FAE59A", borderRadius: 14 },
+              { borderWidth: 3, borderColor: "#C52DE1", borderRadius: 14 },
               chargeStyle,
             ]}
           />
         )}
         {level && (
-          <View
-            style={[
-              s.body,
-              {
-                backgroundColor: colors[level],
-                borderRadius: level < 3 ? 22 : 12,
-                width: size - 13,
-                height: size - 15,
-              },
-            ]}
-          >
-            {level >= 3 && <View style={s.antenna} />}
-            <Text style={s.face}>
-              {level === 5 ? "• ◡ •" : level === 4 ? "• ▿ •" : "• ⌣ •"}
-            </Text>
-            <Text style={s.level}>
-              {level >= 3 ? "ϟ " : ""}
-              {level}
-            </Text>
-          </View>
+          <>
+            <Art
+              row={FAMILIES[family].row}
+              column={level - 1}
+              unit={size - 4}
+            />
+            <View
+              style={[
+                s.badge,
+                {
+                  backgroundColor:
+                    level >= 3 ? FAMILIES[family].accent : "#78528E",
+                },
+              ]}
+            >
+              <Text style={s.level}>
+                {level >= 3 ? "ϟ " : ""}
+                {level}
+              </Text>
+            </View>
+          </>
         )}
       </Animated.View>
     </GestureDetector>
@@ -188,29 +184,23 @@ export const Tile = memo(function Tile({
 const s = StyleSheet.create({
   cell: {
     margin: 2,
-    backgroundColor: "#24334D",
+    backgroundColor: "#F9EFFC",
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
     borderColor: "transparent",
   },
-  selected: { borderColor: "#FAE59A" },
-  highlight: { backgroundColor: "#685038", borderColor: "#EAC180" },
-  body: {
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomWidth: 4,
-    borderBottomColor: "#00000025",
-  },
-  face: { fontSize: 15, fontWeight: "900", color: "#24334D" },
-  level: { fontSize: 11, fontWeight: "900", color: "#24334D" },
-  antenna: {
+  selected: { borderColor: "#C52DE1" },
+  highlight: { backgroundColor: "#F4CBED", borderColor: "#D94CC3" },
+  badge: {
     position: "absolute",
-    top: -5,
-    width: 10,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: "#FFF1B5",
+    bottom: 0,
+    right: 0,
+    borderRadius: 6,
+    minWidth: 15,
+    paddingHorizontal: 3,
+    paddingVertical: 1,
   },
+  level: { fontSize: 9, fontWeight: "900", color: "#FFFFFF" },
 });

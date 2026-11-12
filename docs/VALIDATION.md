@@ -44,3 +44,20 @@ Final simulator relaunch retained workshop stage 2, score 700, mission 2 progres
 ## Physical build
 
 An automatically signed Release build for the connected iPhone 13 Pro (iOS 27.2) succeeded and installed successfully. This build embeds its JavaScript bundle and does not need Metro. The first launch request was denied because the device was locked; interactive validation requires the owner to unlock it.
+
+## 13 November 2026 — approved art and mixed-family board
+
+- Added the approved neon wordmark, hot-pink K / lime P icon, transparent sprite atlas, pastel pink/lilac interface and family-specific effects.
+- All three families now coexist on one board. No family tabs or appearance selection remain.
+- V2 save migration retained the existing user's score 800, mission progress 300/750 and workshop stage 2 on first load. Original V1 data remains as recovery data.
+- Fourteen engine tests pass, including rejecting cross-family merges, preserving family on merge/production, cross-family chain propagation, malformed family rejection and migration.
+- macOS engine benchmark (36 level-5 pieces, 10,000 runs): p50 0.0103 ms, p95 0.0118 ms. These remain engine timings, not rendered FPS.
+- Initial development React p95 with the new artwork was 33–37 ms. Selection handlers were stabilized afterward to avoid rebuilding every cell's gesture on selection. Release FPS and physical-device performance remain unmeasured.
+- Native simulator build succeeded. The KP icon was visually verified on the Home Screen.
+- A separate `KatlaPatla-Visual-QA` simulator was used for destructive gameplay checks, leaving the user's main simulator progress alone.
+- UI smoke test: dragging two matching packets produced level 2; attempting to merge level-3 packet and pepper was rejected; long-pressing the packet triggered the neighboring pepper and awarded 300 total points while the low-level packet remained.
+- UI smoke test: two graphite capsules became steel; two steel capsules became a spring capsule. Long press exploded it and added 100 points without a runtime error.
+- Explosion waves now have 550 ms presentation, with 650 ms for the final wave, so the 550 ms visual effects can complete. Reduced-motion presentation remains short.
+- Phone deployment/testing was intentionally deferred until the user approves the simulator.
+
+After stable selection callbacks were applied, subsequent development React p95 batches were approximately 11.2–16.9 ms with the new art. These samples include two running simulators and are not release frame-rate measurements. QA packet/pepper and cosmic blast calculations measured approximately 0.55 ms and 0.057 ms respectively.

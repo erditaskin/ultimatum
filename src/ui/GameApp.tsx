@@ -24,7 +24,8 @@ import * as Haptics from "expo-haptics";
 import { useAudioPlayer } from "expo-audio";
 import {
   Game,
-  NAMES,
+  Family,
+  FAMILY_IDS,
   missionReward,
   activePowerHour,
   blast,
@@ -41,10 +42,11 @@ import { load, save } from "../storage/save";
 import { Tile } from "./Tile";
 import { Workshop } from "./Workshop";
 import { Celebration } from "./Celebration";
+import { Art, FAMILIES } from "./art";
 const stages = [
   "Minik Atölye",
   "Yaylı Atölye",
-  "Pof Fabrikası",
+  "Katlama Atölyesi",
   "Gümbürtü Laboratuvarı",
   "Çılgın Dönüşüm Merkezi",
 ];
@@ -62,7 +64,7 @@ function WorkshopCard({
           <Text style={s.eyebrow}>ATÖLYEN · AŞAMA {game.workshop + 1}</Text>
           <Text style={s.cardTitle}>{stages[Math.min(game.workshop, 4)]}</Text>
         </View>
-        <Text style={{ fontSize: 30 }}>
+        <Text style={{ fontSize: 30, color: "#B52AC7" }}>
           {["✦", "✦", "✧", "ϟ", "★"][Math.min(game.workshop, 4)]}
         </Text>
       </View>
@@ -97,18 +99,25 @@ function GameScreen() {
     [settings, setSettings] = useState(false),
     [workshopOpen, setWorkshopOpen] = useState(false),
     [message, setMessage] = useState(
-      "İki Pof’u birleştir. Makinelere basılı tut!",
+      "Aynı tür ve seviyeyi birleştir. 3. seviyede patlat!",
     ),
-    [burst, setBurst] = useState<{ text: string; indices: number[] } | null>(
-      null,
-    ),
+    [burst, setBurst] = useState<{
+      text: string;
+      indices: number[];
+      families: Family[];
+    } | null>(null),
     [playback, setPlayback] = useState<Game["board"] | null>(null);
   const current = useRef<Game | null>(null),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null),
     alive = useRef(true),
     locked = useRef(false);
-  const { width } = useWindowDimensions();
-  const boardWidth = Math.min(width - 36, 420),
+  const selection = useRef<number | null>(null);
+  const select = useCallback((index: number | null) => {
+    selection.current = index;
+    setSelected(index);
+  }, []);
+  const { width, height } = useWindowDimensions();
+  const boardWidth = Math.min(width - 36, 420, Math.max(276, height - 560)),
     cell = boardWidth / 6;
   const player = useAudioPlayer(require("../../assets/audio/pop.wav"));
   useEffect(() => {
@@ -156,44 +165,44 @@ function GameScreen() {
     const id = setInterval(tick, 1000);
     const sub = AppState.addEventListener("change", (state) => {
       setArmed(null);
-      setSelected(null);
+      select(null);
       if (state === "active") tick();
     });
     return () => {
       clearInterval(id);
       sub.remove();
     };
-  }, [commit]);
+  }, [commit, select]);
   const onMove = useCallback(
     (from: number, to: number) => {
       if (!current.current || locked.current) return;
       const next = move(current.current, from, to);
       if (next === current.current) {
-        setMessage("Aynı seviyeleri birleştir veya boş kareye taşı.");
+        setMessage("Aynı tür ve seviyeleri birleştir veya boş kareye taşı.");
         return;
       }
       commit(next);
-      setSelected(null);
-      setMessage("Hazırlık güzel! Zincir için makineleri yakınlaştır.");
+      select(null);
+      setMessage("Hazırlık güzel! Zincir için parçaları yakınlaştır.");
     },
-    [commit],
+    [commit, select],
   );
   const onTap = useCallback(
     (i: number) => {
       if (!current.current || locked.current) return;
-      if (selected !== null && selected !== i) {
-        onMove(selected, i);
+      if (selection.current !== null && selection.current !== i) {
+        onMove(selection.current, i);
         return;
       }
-      setSelected(selected === i ? null : i);
+      select(selection.current === i ? null : i);
       const t = current.current.board[i];
       setMessage(
         t
-          ? `${NAMES[t]} · Seviye ${t}${t >= 3 ? " · Patlatmak için basılı tut." : ""}`
+          ? `${FAMILIES[t.family].names[t.level]} · Seviye ${t.level}${t.level >= 3 ? " · Patlatmak için basılı tut." : ""}`
           : "Boş kare · Bir parçayı seçip buraya taşı.",
       );
     },
-    [selected, onMove],
+    [onMove, select],
   );
   const onBlast = useCallback(
     (i: number) => {
@@ -205,7 +214,7 @@ function GameScreen() {
         console.info("[performance] blast ms", performance.now() - started);
       if (!result.events.length) return;
       locked.current = true;
-      setSelected(null);
+      select(null);
       setArmed(null);
       commit(result.game);
       const points = result.events.reduce((sum, e) => sum + e.points, 0);
@@ -240,6 +249,7 @@ function GameScreen() {
         setBurst({
           text: `${result.events.length > 1 ? "ZİNCİR KOMBO!" : "POF!"} ×${Math.min(waves[step] + 1, 8)}\n+${shown.toLocaleString("tr-TR")}`,
           indices: wave.map((e) => e.index),
+          families: [...new Set(wave.map((e) => e.family))],
         });
         timer.current = setTimeout(
           () => {
@@ -250,32 +260,33 @@ function GameScreen() {
               setPlayback(null);
             }
           },
-          g.motion ? 350 : 80,
+          g.motion ? (step + 1 < waves.length ? 550 : 650) : 80,
         );
       };
       showWave(0);
-      setMessage(`${result.events.length} makine patladı. +${points} puan!`);
+      setMessage(`${result.events.length} parça patladı. +${points} puan!`);
     },
-    [commit, player],
+    [commit, player, select],
   );
   const make = () => {
     const g = current.current;
     if (!g || locked.current) return;
     const empty = g.board.flatMap((t, i) => (t === null ? [i] : []));
     if (!empty.length) {
-      setMessage("Tahta dolu. Birleştir veya bir makine patlat.");
+      setMessage("Tahta dolu. Birleştir veya hazır parça patlat.");
       return;
     }
     const next = produce(
       g,
       empty[Math.floor(Math.random() * empty.length)],
       Date.now(),
+      FAMILY_IDS[Math.floor(Math.random() * FAMILY_IDS.length)],
     );
     commit(next);
     setMessage(
       next.board === g.board
         ? "Haklar yenileniyor. Eldeki parçalarla devam edebilirsin."
-        : "Yeni Pof geldi. Aynı seviyeleri birleştir!",
+        : "Yeni parça geldi. Aynı tür ve seviyeleri birleştir!",
     );
   };
   const onUpgrade = () => {
@@ -297,7 +308,7 @@ function GameScreen() {
             </Text>
           </>
         ) : (
-          <ActivityIndicator color="#FDE09A" />
+          <ActivityIndicator color="#9E258F" />
         )}
       </SafeAreaView>
     );
@@ -305,15 +316,19 @@ function GameScreen() {
     ready = game.reward !== null;
   return (
     <SafeAreaView style={s.root}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <ScrollView contentContainerStyle={s.content} bounces={false}>
         <View style={s.header}>
           <View>
             <Text style={s.eyebrow}>ÇILGIN DÖNÜŞÜM ATÖLYESİ</Text>
-            <Text style={s.title}>
-              katla<Text style={{ color: "#FFB67F" }}>patla</Text>
-              <Text style={{ color: "#FAE59A" }}>!</Text>
-            </Text>
+            <View accessibilityLabel="KatlaPatla!" accessible>
+              <Art
+                row={0}
+                column={0}
+                unit={Math.min((width - 115) / 4, 75)}
+                span={3.9}
+              />
+            </View>
           </View>
           <Pressable
             accessibilityLabel="Ayarlar"
@@ -377,16 +392,17 @@ function GameScreen() {
           </View>
         </View>
         <View style={[s.board, { width: boardWidth + 8 }]}>
-          {(playback ?? game.board).map((level, i) => (
+          {(playback ?? game.board).map((piece, i) => (
             <Tile
               key={i}
-              level={level}
+              level={piece?.level ?? null}
+              family={piece?.family ?? "packets"}
               index={i}
               size={cell}
               selected={selected === i}
               highlighted={
                 (armed !== null &&
-                  distance(armed, i) <= (game.board[armed] ?? 0) - 2) ||
+                  distance(armed, i) <= (game.board[armed]?.level ?? 0) - 2) ||
                 !!burst?.indices.includes(i)
               }
               motion={game.motion}
@@ -402,11 +418,11 @@ function GameScreen() {
         </Text>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Pof üret, bir üretim hakkı"
+          accessibilityLabel="Parça üret, bir üretim hakkı"
           onPress={make}
           style={({ pressed }) => [s.produce, { opacity: pressed ? 0.8 : 1 }]}
         >
-          <Text style={s.produceTitle}>✦ POF ÜRET</Text>
+          <Text style={s.produceTitle}>✦ PARÇA ÜRET</Text>
           <Text style={s.produceSub}>
             1 üretim hakkı · Birleştir, hazırla, patlat!
           </Text>
@@ -417,7 +433,13 @@ function GameScreen() {
         </Text>
         {error && <Text style={s.error}>{error}</Text>}
       </ScrollView>
-      {burst && <Celebration text={burst.text} motion={game.motion} />}
+      {burst && (
+        <Celebration
+          text={burst.text}
+          motion={game.motion}
+          families={burst.families}
+        />
+      )}
       <Modal
         visible={workshopOpen}
         transparent
@@ -466,7 +488,7 @@ function GameScreen() {
             ))}
             <Text style={s.muted}>
               Taşı: sürükle veya seçip hedefe dokun. Patlat: 3. seviye ve üstüne
-              kısa basılı tut. Küçük Pof’lar patlamadan korunur.
+              kısa basılı tut. İlk iki seviye patlamadan korunur.
             </Text>
             <Pressable style={s.upgrade} onPress={() => setSettings(false)}>
               <Text style={s.text}>Oyuna dön</Text>
@@ -504,10 +526,10 @@ export default function App() {
   );
 }
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#101B2E" },
+  root: { flex: 1, backgroundColor: "#FFF4FB" },
   loading: {
     flex: 1,
-    backgroundColor: "#101B2E",
+    backgroundColor: "#FFF4FB",
     justifyContent: "center",
     padding: 24,
   },
@@ -516,7 +538,7 @@ const s = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 20,
     alignItems: "center",
-    gap: 12,
+    gap: 9,
   },
   header: {
     width: "100%",
@@ -525,7 +547,7 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   eyebrow: {
-    color: "#9CAEC8",
+    color: "#8A5899",
     fontSize: 9,
     fontWeight: "800",
     letterSpacing: 1.5,
@@ -533,23 +555,23 @@ const s = StyleSheet.create({
   title: {
     fontSize: 34,
     fontWeight: "900",
-    color: "#B6E6D7",
+    color: "#A727BA",
     letterSpacing: -1.5,
   },
-  gear: { padding: 12, backgroundColor: "#24334D", borderRadius: 16 },
+  gear: { padding: 12, backgroundColor: "#EDDDF4", borderRadius: 16 },
   stats: {
     flexDirection: "row",
     width: "100%",
     justifyContent: "space-between",
-    backgroundColor: "#1C2A42",
+    backgroundColor: "#F4E5F8",
     padding: 12,
     borderRadius: 15,
   },
-  stat: { color: "#FDE09A", fontSize: 14, fontWeight: "800" },
-  text: { color: "#EDF2FC", fontSize: 14, fontWeight: "600" },
-  muted: { color: "#A7B6CC", fontSize: 12, lineHeight: 18 },
+  stat: { color: "#9E258F", fontSize: 14, fontWeight: "800" },
+  text: { color: "#482750", fontSize: 14, fontWeight: "600" },
+  muted: { color: "#795A83", fontSize: 12, lineHeight: 18 },
   card: {
-    backgroundColor: "#20314A",
+    backgroundColor: "#FFFFFF",
     padding: 14,
     borderRadius: 18,
     width: "100%",
@@ -560,72 +582,72 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  cardTitle: { color: "#F2E9D5", fontSize: 16, fontWeight: "800" },
-  reward: { color: "#FDE09A", fontWeight: "800", fontSize: 12 },
+  cardTitle: { color: "#482750", fontSize: 16, fontWeight: "800" },
+  reward: { color: "#9E258F", fontWeight: "800", fontSize: 12 },
   track: {
     height: 7,
-    backgroundColor: "#101B2E",
+    backgroundColor: "#FFF4FB",
     borderRadius: 8,
     overflow: "hidden",
   },
-  fill: { height: 7, backgroundColor: "#9CDDC4", borderRadius: 8 },
+  fill: { height: 7, backgroundColor: "#DB3AB4", borderRadius: 8 },
   board: {
     flexDirection: "row",
     flexWrap: "wrap",
     padding: 4,
-    backgroundColor: "#19263C",
+    backgroundColor: "#DDC9EC",
     borderRadius: 20,
   },
   hint: {
     fontSize: 12,
     lineHeight: 17,
-    color: "#C7D3E6",
+    color: "#795A83",
     textAlign: "center",
     minHeight: 34,
   },
   produce: {
-    backgroundColor: "#FFBD88",
+    backgroundColor: "#CB24AD",
     borderRadius: 18,
     padding: 14,
     width: "100%",
     alignItems: "center",
     borderBottomWidth: 4,
-    borderBottomColor: "#C47D53",
+    borderBottomColor: "#921B91",
   },
   produceTitle: {
     fontSize: 19,
     fontWeight: "900",
-    color: "#322C40",
+    color: "#FFFFFF",
     letterSpacing: 1,
   },
-  produceSub: { fontSize: 11, color: "#594351", marginTop: 4 },
+  produceSub: { fontSize: 11, color: "#FFE5FA", marginTop: 4 },
   workshop: {
     width: "100%",
     padding: 16,
     borderWidth: 1,
-    borderColor: "#3E4D63",
+    borderColor: "#E4C9EC",
     borderRadius: 18,
     gap: 8,
-    backgroundColor: "#1A293D",
+    backgroundColor: "#FBF0FD",
   },
   upgrade: {
     padding: 12,
     alignItems: "center",
     borderRadius: 12,
-    backgroundColor: "#354863",
+    backgroundColor: "#A53FC0",
     marginTop: 5,
   },
-  footer: { color: "#788CA9", fontSize: 9, letterSpacing: 1 },
-  power: { color: "#FFCE7E", fontSize: 11, fontWeight: "900" },
-  error: { color: "#FF9C9C", fontSize: 12 },
+  footer: { color: "#8C6A96", fontSize: 9, letterSpacing: 1 },
+  power: { color: "#9E258F", fontSize: 11, fontWeight: "900" },
+  error: { color: "#B52349", fontSize: 12 },
   modal: {
     flex: 1,
-    backgroundColor: "#000A",
+    backgroundColor: "#48275077",
     justifyContent: "center",
     padding: 24,
   },
   modalCard: {
-    backgroundColor: "#20314A",
+    backgroundColor: "#FFFFFF",
     borderRadius: 24,
     padding: 24,
     gap: 18,

@@ -2,6 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   initial,
+  piece,
+  migrateGame,
   move,
   blast,
   produce,
@@ -13,21 +15,21 @@ import {
 test("merges conserve level value and do not mutate source", () => {
   const g = initial(0);
   const n = move(g, 20, 21);
-  assert.equal(n.board[21], 2);
+  assert.deepEqual(n.board[21], piece(2));
   assert.equal(n.board[20], null);
-  assert.equal(g.board[20], 1);
+  assert.deepEqual(g.board[20], piece(1));
   assert.equal(move(n, 14, 21), n);
 });
 test("breadth first chain consumes each machine once and protects Pofs", () => {
   const g = initial(0);
-  g.board[8] = 3;
+  g.board[8] = piece(3);
   const { game, events } = blast(g, 14, 0);
   assert.equal(events.length, 3);
   assert.equal(new Set(events.map((e) => e.index)).size, 3);
   assert.equal(game.score, 500);
-  assert.equal(game.board[20], 1);
+  assert.deepEqual(game.board[20], piece(1));
   assert.equal(game.reward, 100);
-  assert.equal(g.board[14], 3);
+  assert.deepEqual(g.board[14], piece(3));
 });
 test("mission reward claimed once and workshop spends gold", () => {
   const g = blast(initial(0), 14, 0).game;
@@ -42,7 +44,7 @@ test("mission reward claimed once and workshop spends gold", () => {
 });
 test("full board and empty rights cannot spend production rights", () => {
   let g = initial(0);
-  g.board.fill(1);
+  g.board.fill(piece(1));
   assert.equal(produce(g, 0, 0), g);
   g = initial(0);
   g.rights = 0;
@@ -69,7 +71,7 @@ test("save validation rejects corrupt data", () => {
 });
 test("maximum-level pieces cannot merge; cycles cannot loop", () => {
   const g = initial(0);
-  g.board.fill(5);
+  g.board.fill(piece(5));
   assert.equal(move(g, 0, 1), g);
   const b = blast(g, 0, 0);
   assert.equal(b.events.length, 36);
@@ -117,4 +119,58 @@ test("Power Hour boosts mission gold only inside its exact window", async () => 
   assert.equal(missionReward(0, 1000, campaigns), 150);
   assert.equal(missionReward(1, 1999, campaigns), 172);
   assert.equal(missionReward(0, 2000, campaigns), 100);
+});
+
+test("only matching families and levels merge; cross-family machines chain", () => {
+  const g = initial(0);
+  g.board[0] = piece(2, "peppers");
+  g.board[1] = piece(2, "cosmic");
+  assert.equal(move(g, 0, 1), g);
+  g.board[1] = piece(2, "peppers");
+  assert.deepEqual(move(g, 0, 1).board[1], piece(3, "peppers"));
+  const chain = blast(initial(0), 14, 0);
+  assert.equal(chain.events.length, 2);
+  assert.deepEqual(
+    chain.events.map((e) => e.family),
+    ["packets", "peppers"],
+  );
+});
+test("production accepts all families and retains the level-one rule", () => {
+  for (const family of ["packets", "peppers", "cosmic"] as const)
+    assert.deepEqual(
+      produce(initial(0), 0, 0, family).board[0],
+      piece(1, family),
+    );
+});
+test("legacy migration preserves progress, positions and levels without mutating input", () => {
+  const old = {
+    ...initial(100),
+    version: 1,
+    board: Array(36).fill(null),
+    score: 800,
+    gold: 115,
+    mission: 2,
+  };
+  old.board[0] = 1;
+  old.board[2] = 4;
+  old.board[4] = 5;
+  const migrated = migrateGame(old);
+  assert.ok(migrated);
+  assert.equal(migrated.version, 2);
+  assert.equal(migrated.score, 800);
+  assert.equal(migrated.gold, 115);
+  assert.equal(migrated.mission, 2);
+  assert.deepEqual(migrated.board[0], piece(1, "packets"));
+  assert.deepEqual(migrated.board[2], piece(4, "peppers"));
+  assert.deepEqual(migrated.board[4], piece(5, "cosmic"));
+  assert.equal(old.version, 1);
+  assert.equal(old.board[2], 4);
+  assert.equal(migrateGame({ ...old, board: [9] }), null);
+  assert.equal(
+    isGame({
+      ...migrated,
+      board: [{ family: "bad", level: 1 }, ...Array(35).fill(null)],
+    }),
+    false,
+  );
 });

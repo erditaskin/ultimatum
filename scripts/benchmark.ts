@@ -1,7 +1,7 @@
 import { performance } from "node:perf_hooks";
-import { initial, blast } from "../src/game/engine";
+import { initial, blast, piece } from "../src/game/engine";
 const g = initial(0);
-g.board.fill(5);
+g.board.fill(piece(5));
 for (let i = 0; i < 1000; i++) blast(g, 0, 0);
 const samples: number[] = [];
 for (let i = 0; i < 10000; i++) {
