@@ -1,5 +1,7 @@
 # Validation log
 
+This log describes the running legacy prototype. Karbasan screen concepts are not implemented or device-validated. The design-only update preserves application code and existing saves.
+
 ## Automated checks
 
 - Strict TypeScript compilation.

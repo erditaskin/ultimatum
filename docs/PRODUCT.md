@@ -1,44 +1,36 @@
-# Katla Patla — MVP kararları
+# Katla Patla — Karbasan ürün yönü
 
-## Kimlik ve kapsam
+## Belge durumu
 
-Katla Patla, katlı paketler, biberler ve kozmik kapsüllerin bulunduğu bir dönüşüm atölyesinde geçen, iOS öncelikli bir üretme, birleştirme ve zincir patlatma oyunudur. Expo, React Native ve TypeScript kullanılır. Android sonraki aşamadır. İlk sürüm çevrimdışı, hesapsızdır. Reklam, satın alma ve bulut kayıt yoktur.
+Bu belge yeni, üzerinde çalışılan ürün kararlarını anlatır. Çalışan kod hâlâ paket/biber/kapsül prototipidir. Önceki kurallar `design/archive/legacy-docs/PRODUCT-v1.md` içinde korunur. Yeni tasarım kodlanmamıştır; görsel referans ve sapma listesi `design/karbasan/README.md` içindedir.
 
-## Oyun döngüsü
+## Kabul edilen temel kararlar
 
-1. Üreticiye dokunarak 6×6 tahtanın boş bir karesine üç türden bir seviye 1 parça üret.
-2. Aynı tür ve seviyedeki iki parçayı birleştirerek üst seviyeye çıkar. En yüksek seviye 5'tir.
-3. Parçaları boş karelere taşıyarak zincir hazırla.
-4. Seviye 3–5 parçaya 250 ms basılı tutarak patlat. Erken bırakma veya taşıma patlamayı iptal eder.
-5. Patlama menzilindeki hazır parçalar zincire katılır. Her parça yalnızca bir kez tetiklenir. Seviye 1–2 parçalar korunur.
-6. Puanla tek aktif görevi tamamla, altın kazan. Tahta görev sonunda korunur.
-7. Altınla atölyeyi sabit sırayla dönüştür. MVP beş atölye dönüşümü içerir; sergilenen nesne ve atölye sunumu değişir. Beş parça seviyesi başlangıçtan itibaren kullanılabilir. Yeni üretici açılması sonraki sürümlere bırakılmıştır. İkinci bir yönetim oyunu yoktur.
+- iOS öncelikli Expo/React Native/TypeScript; Android sonra. Offline ve hesapsız başlangıç.
+- Fantastik maden ve kuyumculuk evreni. Katla, değer ve komboyu katlamak anlamına gelir.
+- İlk kasaba Karbasan, kar temalıdır. Sezonluk Santa/yılbaşı dekorları kalıcı tema üstüne eklenebilir.
+- MVP ilk kasabayı kapsar; ana gelişimi 8–12 hafta hedeflenir. Süre garanti değildir, oturum alışkanlığı ve ekonomi ölçümü gerektirir. Sonraki iki kasaba yalnızca prototiptir.
+- Sekiz malzeme: Demir, Bronz, Gölge Demiri, Agapit, Verit, Valorit, Karataş, Kızıltaş. Ayrı Bakır eklenmez. Demir/Bronz bol; diğerleri seviyelerle açılır ve nadir çıkar. Gelecek kasabalarda dağılımlar değişir.
+- Aynı maden ve aynı basamaktaki iki cevher birleşir. Beş basamak vardır. Malzeme türü birleşerek başka metale dönüşmez.
+- Basamak 3–5 kırılabilir. Kırılınca kendi külçesi veya işlenmiş bloğu ortak depoya gider. Cevher kırmak komşuları otomatik tüketmez.
+- Madenler tek tahtada birlikte oynanır. Aile sekmeleri yoktur. Yeni çizim 6×8 önerir; mevcut kod 6×6'dır. Kesin ölçü cihaz yerleşimiyle doğrulanır.
+- Craft, hazırlanmış malzemeler ve seçili tarifle tek dokunuşta yapılır. Teslim ayrı dokunuştur. İlk NPC istekleri belirli ürün tarifleridir.
+- NPC siparişleri altın ve XP kazandırır. Altın atölye ve özellik açılışında kullanılır. Ek üretim hakkı alımı düşünülmektedir; maliyetleri kesinleşmemiştir.
+- Ana patlama gösterisi büyü enerjisinin zincirle boşalmasıdır. Bitmiş takılar kendiliğinden patlamaz.
+- Eşyalar bölümü vardır. Başlangıçta tek takılabilir amulet ve tek anlaşılır bonus; korunan/takılı eşya otomatik tüketilmez.
+- XP ve başarımlar ilerleme/unvan kazandırır. Çırak, Kalfa, Usta, Büyük Usta; özel başarım unvanları ve seçilebilir Lord/Leydi hitabı. Eşikler belirlenmemiştir.
+- İleride taşınma, birikmiş malzemeyi korur ve yeni şehir kaynaklarını açar. Çoklu atölye eşzamanlı yönetimi MVP işi değildir.
+- Power Hour hızlı enerji yenilenmesi ve artırılmış XP/ödül için kullanılabilir. Katsayılar ve tarihler kesinleşmemiştir.
+- Logo C: yeşim yeşili K, menekşe moru P, taş yüzeyler; iki atla ortak sakin krem.
 
-## Parçalar
+## Kod öncesi kapatılacak iş kuralları
 
-Katlı paketler, biberler ve kozmik kapsüller aynı tahtada oynanır. Her türün beş seviyesi vardır. Görsel ayrıntılar `ART_DIRECTION.md` içindedir. İlk iki seviye patlatılamaz. Seviye 3–5 menzilleri sırasıyla 1, 2, 3 kare Manhattan uzaklığıdır. Yalnızca hazır parçalar patlamada tüketilir. Dolu karede farklı tür veya seviyeler yer değiştirmez; geçersiz hamle kaynak tüketmez.
+1. Cevher üretici sayısı, oyuncunun kaynak seçimi, açık maden olasılıkları ve tahta tıkanma çözümü.
+2. Kırma verimi, bonus taş çıkışı ve depo modeli; değerli taş aileleri ve kesim basamakları.
+3. Ürün tarifleri, sipariş üretimi/değiştirme ve ödül hesabı.
+4. Büyü enerjisinin kazanımı, tetiklenmesi, zincir menzili ve çarpanları.
+5. Enerji kapasitesi/yenilenmesi, altın harcama dengesi, premium para ve mağaza kapsamı.
+6. XP/unvan eşikleri, ilk kasabanın 8–12 haftalık hedef eğrisi, Power Hour katsayıları.
+7. Eski prototip kayıtlarının yeni ürün modeline nasıl taşınacağı. Kullanıcı ilerlemesi sessizce sıfırlanmaz.
 
-## Ekonomi ve başlangıç dengesi
-
-Yalnızca üretim hak harcar. Kapasite 60; normal yenilenme 30 saniyede bir haktır. Birleştirme, taşıma ve patlatma ücretsizdir. Dolu tahtaya üretim hak tüketmez. Başlangıçta öğretici zincir için iki seviye 3 parça bulunur. Bunlar tek seferliktir.
-
-Puan harcanmaz; altın harcanır. Basamak puanı = parçanın temel puanı × min(zincir derinliği + 1, 8). Aynı dalga aynı çarpanı kullanır. Temel puanlar 100, 300, 900'dür. Görevler başlangıçta 500 puan ister; sonraki hedefler kademeli büyür. Görev ödülü yalnızca açıkça talep edilince bir kez verilir; fazla puan sonraki göreve taşınır.
-
-Power Hour yerel paketlenmiş tarih aralıklarıyla açılır. Üretim hakkı iki kat hızlı dolar; görev altını %50 artar. Görev tamamlandığı andaki bonus sabitlenir. XP yoktur. Üretim hakkı yenilenirken pencere sınırları hesaba katılır. Çevrimdışı cihaz saati güvenilirdir; saati değiştirmeye karşı sunucu güvencesi yoktur.
-
-## Sunum ve erişilebilirlik
-
-Dikey ekran, Türkçe arayüz, tek tahta. Patlama öncesi menzil vurgusu. Zincirde artan ses ve çarpan; kısa kutlama. Ses, titreşim ve azaltılmış hareket kontrolleri. Renk yanında seviye ve şekil kullanılır. Seç ve hedef kareye dokun erişilebilir taşıma alternatifidir.
-
-## Ertelenenler
-
-Mors/ritim etkileşimi, hesap, bulut kayıt, gerçek para, reklam, liderlik tablosu, çoklu kaynak, kapsamlı kasaba yönetimi ve Android doğrulaması.
-
-## Referanslar
-
-- https://support.traveltowngame.com/hc/en-us/articles/6187057873810-How-do-I-upgrade-my-Town
-- https://support.traveltowngame.com/hc/en-us/articles/4833678076434-What-are-Orders
-- https://candycrush.zendesk.com/hc/en-us/articles/360002087578-How-do-I-collect-Sugar-Stars
-- https://docs.expo.dev/get-started/create-a-project/
-
-Sayısal denge değerleri ürün vaadi değil, oynanabilir prototip varsayımlarıdır.
+Görsellerde görünen sayılar ve henüz onaylanmamış dükkân/bonus teklifleri bu listeyi kesinleştirmez. Gerçek para, reklam ve çevrimiçi pazar için yeni karar gerekir.

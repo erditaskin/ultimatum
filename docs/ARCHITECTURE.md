@@ -1,5 +1,7 @@
 # Mimari
 
+Bu belge çalışan paket/biber/kapsül prototipini anlatır. Karbasan tasarımı henüz uygulanmamıştır; yeni geçiş sırası `IMPLEMENTATION_PLAN.md` içindedir.
+
 ## Sınırlar
 
 - `src/game`: React ve native bağımlılığı olmayan deterministik TypeScript kuralları. Saat, üretim konumu ve üretilecek tür dışarıdan verilir. Patlama breadth-first çözülür, ziyaret kümesi tekrar tetiklemeyi önler.
