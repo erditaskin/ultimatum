@@ -76,21 +76,35 @@ const Crop = memo(function Crop({
   return (
     <View
       pointerEvents="none"
-      style={[{ width, height, overflow: "hidden" }, style]}
+      style={[
+        {
+          width,
+          height,
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+        },
+        style,
+      ]}
     >
-      <Image
-        accessible={false}
-        fadeDuration={0}
-        source={source.image}
-        resizeMode="stretch"
-        style={{
-          position: "absolute",
-          width: source.width * sx,
-          height: source.height * sy,
-          left: (width - rect.w * sx) / 2 - rect.x * sx,
-          top: (height - rect.h * sy) / 2 - rect.y * sy,
-        }}
-      />
+      {/* Clip the sprite before centering; letterboxing must never reveal neighboring atlas pixels. */}
+      <View
+        style={{ width: rect.w * sx, height: rect.h * sy, overflow: "hidden" }}
+      >
+        <Image
+          accessible={false}
+          fadeDuration={0}
+          source={source.image}
+          resizeMode="stretch"
+          style={{
+            position: "absolute",
+            width: source.width * sx,
+            height: source.height * sy,
+            left: -rect.x * sx,
+            top: -rect.y * sy,
+          }}
+        />
+      </View>
     </View>
   );
 });
