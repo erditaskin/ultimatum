@@ -2,6 +2,8 @@
 
 Bu paket yeni ürün yönünün görsel referansıdır. Mevcut uygulama hâlâ eski oynanabilir prototiptir. Bu çalışmada uygulama kodu değiştirilmemiştir.
 
+Ekran bazlı yeni varlık adayları ve üretim planı [production/README.md](production/README.md) altında toplanmıştır. Yazılımın ayrıntılı geçiş planı [KARBASAN_BUILD_PLAN.md](../../docs/KARBASAN_BUILD_PLAN.md) içindedir.
+
 ## Seçili kimlik
 
 - İlk kasaba Karbasan: kar, çam, sıcak ocaklar, pastel çevre; yılbaşı dekoru ayrı sezon katmanıdır.

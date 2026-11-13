@@ -1,5 +1,7 @@
 # Karbasan uygulama sırası
 
+Ayrıntılı güncel üretim ve doğrulama planı: [KARBASAN_BUILD_PLAN.md](KARBASAN_BUILD_PLAN.md). Ekran bazlı görsel eşlemesi: [ASSET_PLAN.md](../design/karbasan/production/ASSET_PLAN.md).
+
 ## 1. Tasarım ve kural kilidi
 
 Ekran paketini incele; açık ekonomi, craft, büyü ve taş kurallarını kapat. Görsel yön onayı, bütün örnek sayıları onaylamış sayılmaz. İlk sürüm kapsamını belirle; mağaza ve yeni para birimi karara bağlıdır.

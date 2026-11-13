@@ -36,6 +36,9 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Local previews; reviewed design deliverables belong in design/karbasan.
+/output/
+
 # generated native folders
 /ios
 /android

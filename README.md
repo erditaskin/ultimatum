@@ -4,6 +4,8 @@ Offline-first iOS merge-and-chain puzzle built with Expo and TypeScript.
 
 ## Current design direction
 
+Detailed delivery plan: [Karbasan build plan](docs/KARBASAN_BUILD_PLAN.md). Screen-by-screen art dependencies and staged asset candidates: [asset plan](design/karbasan/production/ASSET_PLAN.md). These assets are not imported into the running prototype.
+
 The next product direction is Karbasan, a snowy fantasy mining and jewelry workshop. The [screen review package](design/karbasan/README.md) contains the selected C logo, gameplay reference and 21 additional screen/state concepts. See the [implementation sequence](docs/IMPLEMENTATION_PLAN.md) and [current product decisions](docs/PRODUCT.md). Application code still runs the earlier packet/pepper/capsule prototype; the new designs have not been implemented. Earlier explorations are preserved under `design/archive/`.
 
 ## Run
