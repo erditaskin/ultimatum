@@ -1,4 +1,6 @@
-# Katla Patla
+# Ultimatum
+
+Repository: https://github.com/erditaskin/ultimatum
 
 Offline-first iOS merge-and-chain puzzle built with Expo and TypeScript.
 

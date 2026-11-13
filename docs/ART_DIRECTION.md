@@ -1,4 +1,4 @@
-# Katla Patla — güncel sanat yönü
+# Ultimatum — güncel sanat yönü
 
 Güncel tasarım paketi: [Karbasan](../design/karbasan/README.md).
 

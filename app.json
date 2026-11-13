@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Katla Patla",
-    "slug": "katlapatla",
+    "name": "Ultimatum",
+    "slug": "ultimatum",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/karbasan/app-icon.png",
@@ -34,6 +34,6 @@
       "expo-router",
       "expo-asset"
     ],
-    "scheme": "katlapatla"
+    "scheme": ["ultimatum", "katlapatla"]
   }
 }

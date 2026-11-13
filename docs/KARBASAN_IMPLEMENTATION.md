@@ -74,3 +74,9 @@ Ek görsel sözleşmesi kontrolü: `npm run verify:assets`, 19 PNG kaynağının
 Son görsel kontrolde ortak atlas kırpması düzeltildi: nesne oranı hedef kutudan farklıysa önce yalnızca sprite alanı kırpılır, sonra kutuda ortalanır. Böylece kenar boşluklarında komşu atlas nesneleri görünmez. Normal ve esneyen çerçeveler aynı merkezî bileşeni kullanır.
 
 Son teslim: kırpma düzeltmesinden sonra Release yeniden başarıyla derlendi ve hem QA hem ana iPhone 17 Pro simülatörüne kuruldu. Metro kapalıyken ana simülatörde ilk seviye, 100 enerji, 350 altın ve başlangıç cevherleri görüldü. Karşılama kapatıldı; ana oyun ekranı kullanıcı testi için açık bırakıldı. Üst atölye görselinin kenarında komşu atlas parçası artık görünmüyor.
+
+## Ultimatum adlandırması
+
+Projenin güncel adı Ultimatum, GitHub deposu `https://github.com/erditaskin/ultimatum.git`, yerel klasörü `/Users/erdi/Documents/ChatGPT/ultimatum` olarak değiştirildi. Paket adı ve Expo slug `ultimatum` olur. `ultimatum` bağlantı şemasına eski `katlapatla` şeması uyumluluk için eşlik eder. Mevcut kurulumun ve ilerlemenin devamı için `com.erditaskin.katlapatla` uygulama kimliği ve eski kayıt anahtarları korunur. Mevcut KP raster logoları eski sanat varlığı olarak kalır; Ultimatum logosunun tasarımı ayrı görsel çalışmadır. Eski tasarım dosyaları ve test cihazlarının tarihsel adları değiştirilmez.
+
+Etkin Codex sohbetinin ve eski yerel native derleme yollarının bozulmaması için eski `kp` yolu, gerçek `ultimatum` klasörüne işaret eden bir uyumluluk symlink’i olarak tutulur. Kaynakların gerçek klasörü `ultimatum` olur.

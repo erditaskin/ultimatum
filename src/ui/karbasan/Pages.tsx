@@ -1028,7 +1028,7 @@ export function SettingsPage() {
           <Label
             style={{ textAlign: "center", color: colors.muted, fontSize: 12 }}
           >
-            Katla Patla · Karbasan 1.0
+            Ultimatum · Karbasan 1.0
           </Label>
           <Label style={styles.muted}>
             Eski prototip kaydı korunur. Karbasan ilerlemesi bu cihazda ayrı
