@@ -42,3 +42,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Also ignore a local node_modules symlink used for stable external caches.
+/node_modules

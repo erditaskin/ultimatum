@@ -2,7 +2,7 @@
 
 ## Kapsam ve mevcut durum
 
-Bu planın çıktısı, repo temizliği, ekran bazlı görsel adayları, varlık sözleşmesi ve ölçülebilir uygulama aşamalarıdır. Bu aşama çalışan oyunu yeniden yazmaz. `src/` hâlâ önceki oynanabilir prototiptir; yeni sanat adayları uygulamaya import edilmez.
+Bu belge ilk üretim planını korur. Planın uygulanan kapsamı, kesinleşen iş kuralları ve doğrulama sınırları `KARBASAN_IMPLEMENTATION.md` içindedir. Yeni Router girişi Karbasan motoruna ve onaylı sanat varlıklarına bağlıdır.
 
 Görsel hedef `design/karbasan/screens/` altındaki onaylanan yöndür. Logo için C satırı ve tekil maden kartelaları kaynak kabul edilir. Ekran çizimlerinin içindeki yanlış nesne, ad ve XP simgeleri kopyalanmaz.
 

@@ -39,7 +39,9 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "benchmark": "node --import tsx scripts/benchmark.ts",
     "format": "prettier --write src tests scripts docs *.json README.md",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "benchmark:karbasan": "node --import tsx scripts/benchmark-karbasan.ts",
+    "verify:assets": "node --import tsx scripts/verify-karbasan-assets.ts"
   },
   "private": true,
   "packageManager": "npm@11.7.0",

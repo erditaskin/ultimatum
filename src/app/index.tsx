@@ -1,1 +1,1 @@
-export { default } from "../ui/GameApp";
+export { Home as default } from "../ui/karbasan/Home";

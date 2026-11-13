@@ -1,0 +1,11 @@
+# Jewelry corrections v1
+
+Tool: built-in Imagegen (`imagegen` skill). Final asset: `jewelry-corrections-v1.png`. Reference: `jewelry.png` as style and silhouette input. The PNG is preserved unchanged; only native clipping rectangles select its four objects.
+
+## Final prompt
+
+Use case: stylized-concept. Asset type: ONE transparent 2x2 game sprite atlas of four corrected jewelry icons for Katla Patla Karbasan. The input sheet is a STYLE AND SILHOUETTE REFERENCE ONLY; create a new correction sheet, do not include any reference background or text. Match the same charming polished hand-painted 3D casual fantasy mobile game art, thick readable silhouettes, jewel facets, bright specular highlights and soft tiny contact shadows, warm cream reflections, exactly the same 3/4 viewing angles as the reference. Four isolated objects, centered in four equally sized quadrants with generous empty transparent gutters and margins, NO text/labels/numbers/borders. TOP LEFT: plain iron ring, silver-gray thick oval ring band, no gems of any kind, simple recognizable polished iron jewelry. TOP RIGHT: iron bracelet, silver-gray articulated oval bracelet matching reference bracelet silhouette, exactly three bright RUBY RED inset stones, absolutely no green. BOTTOM LEFT: Blackrock amulet, reference diamond-shaped amulet silhouette, medium charcoal metallic gray frame with small cyan glowing seams, a large faceted PURPLE AMETHYST in the center, no cyan center gemstone, no pure black fill. BOTTOM RIGHT: Bloodrock crown, reference three-point crown silhouette, dark crimson copper-red metallic frame with three bright RUBY RED gemstones, no purple gemstones. Preserve consistent art detail/lighting across all four. Actual transparent alpha background. No snow covering the jewelry, no display stands, no extra props, no UI. Ensure every jewelry piece stays entirely inside its own quadrant, enough transparent separation for native sprite clipping.
+
+## Validation
+
+The generated atlas is 1263 × 1246 pixels. Row separation is selected in the transparent gutter at y=550 rather than assuming half the image height. Every clipping coordinate is an integer. Ring has no gemstone; iron bracelet and Bloodrock crown use red gems; Blackrock amulet uses a purple center with cyan frame details.
